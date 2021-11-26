@@ -30,7 +30,7 @@ class Bot: TelegramLongPollingBot() {
             execute(SendMessage
                 .builder()
                 .chatId(update.message.chatId.toString())
-                .text("$username: Ты написал: ${update.message.text}")
+                .text("${update.message.chatId}: ${update.message.text}")
                 .build()
             )
         } catch (e: TelegramApiException) {
