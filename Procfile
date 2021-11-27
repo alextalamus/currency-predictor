@@ -1,1 +1,1 @@
-bot: java -jar target/statalefbot-1.0.jar
+worker: java -jar target/statalefbot-1.0.jar
