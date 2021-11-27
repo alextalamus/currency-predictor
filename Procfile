@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar target/statalefbot-1.0.jar -Dserver.port=$PORT $JAR_OPTS
+bot: java -jar target/statalefbot-1.0.jar
