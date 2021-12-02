@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest
 class CurrencyPredictorApplicationTests {
 
     @Test
-    fun contextLoads() {
+    fun context(){
+
     }
 
 }

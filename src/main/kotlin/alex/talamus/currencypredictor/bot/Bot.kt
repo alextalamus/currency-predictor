@@ -1,47 +1,76 @@
 package alex.talamus.currencypredictor.bot
 
-import alex.talamus.currencypredictor.domain.Message
-import alex.talamus.currencypredictor.repositories.MessageRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import alex.talamus.currencypredictor.properties.BotProperty
+import alex.talamus.currencypredictor.services.ReceiverService
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.bots.TelegramLongPollingBot
+import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
+import javax.annotation.PostConstruct
 
 
 @Component
-class Bot: TelegramLongPollingBot() {
+class Bot(
+    private val botProperty: BotProperty,
+    private val botCommands: List<IBotCommand>,
+    private val receiverService: ReceiverService
+): TelegramLongPollingCommandBot() {
 
-    @Autowired
-    lateinit var repository: MessageRepository
+    @PostConstruct
+    fun initCommands() {
+        botCommands.forEach {
+            register(it)
+        }
 
-    @Value("\${bot.name}")
-    lateinit var username: String
+        registerDefaultAction { absSender, message ->
 
-    @Value("\${bot.token}")
-    lateinit var token: String
+            val commandUnknownMessage = SendMessage()
+            commandUnknownMessage.chatId = message.chatId.toString()
+            commandUnknownMessage.text = "Command '${message.text}' unknown"
 
-    override fun getBotUsername(): String {
-        return username
-    }
-
-    override fun getBotToken(): String {
-        return token
-    }
-
-    override fun onUpdateReceived(update: Update) {
-        try {
-            execute(SendMessage
-                .builder()
-                .chatId(update.message.chatId.toString())
-                .text("${update.message.chatId}: ${update.message.text}")
-                .build()
-            )
-            repository.save(Message(update.message.text))
-        } catch (e: TelegramApiException) {
-            e.printStackTrace()
+            absSender.execute(commandUnknownMessage)
         }
     }
+
+    override fun processNonCommandUpdate(update: Update) {
+
+
+//        val message = update.message
+//        val chatId = message.chatId
+//
+//        val responseMessage = SendMessage()
+//        responseMessage.enableMarkdown(true)
+//        responseMessage.replyMarkup = getReplyMarkup(
+//            listOf(
+//                listOf("Кнопка 1", "Кнопка 2"),
+//                listOf("Кнопка 3", "Кнопка 4")
+//            )
+//        )
+//
+//        execute(responseMessage)
+        receiverService.execute(update)
+
+
+    }
+
+    private fun getReplyMarkup(allButtons: List<List<String>>): ReplyKeyboardMarkup {
+        val markup = ReplyKeyboardMarkup()
+        markup.keyboard = allButtons.map { rowButtons ->
+            val row = KeyboardRow()
+            rowButtons.forEach { rowButton -> row.add(rowButton) }
+            row
+        }
+        return markup
+    }
+
+
+    override fun getBotUsername(): String = botProperty.username
+
+    override fun getBotToken(): String = botProperty.token
+
+
 }
