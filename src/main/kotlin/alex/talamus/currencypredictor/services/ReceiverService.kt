@@ -15,6 +15,7 @@ class ReceiverService(
 
     fun execute(update: Update){
         if (update.hasCallbackQuery()) {
+            println("callback execute")
             callbackExecute(update.callbackQuery)
         } else if (update.hasMessage()) {
             messageExecute(update.message)
@@ -24,9 +25,8 @@ class ReceiverService(
     }
 
     private fun callbackExecute(callbackQuery: CallbackQuery) {
-        val chatId = callbackQuery.from.id
         println("callback")
-
+    //    val chatId = callbackQuery.from.id
     }
 
     private fun messageExecute(message: Message) {

@@ -7,8 +7,11 @@ import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingC
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import javax.annotation.PostConstruct
 
@@ -37,40 +40,11 @@ class Bot(
     }
 
     override fun processNonCommandUpdate(update: Update) {
-
-
-//        val message = update.message
-//        val chatId = message.chatId
-//
-//        val responseMessage = SendMessage()
-//        responseMessage.enableMarkdown(true)
-//        responseMessage.replyMarkup = getReplyMarkup(
-//            listOf(
-//                listOf("Кнопка 1", "Кнопка 2"),
-//                listOf("Кнопка 3", "Кнопка 4")
-//            )
-//        )
-//
-//        execute(responseMessage)
         receiverService.execute(update)
-
-
     }
-
-    private fun getReplyMarkup(allButtons: List<List<String>>): ReplyKeyboardMarkup {
-        val markup = ReplyKeyboardMarkup()
-        markup.keyboard = allButtons.map { rowButtons ->
-            val row = KeyboardRow()
-            rowButtons.forEach { rowButton -> row.add(rowButton) }
-            row
-        }
-        return markup
-    }
-
 
     override fun getBotUsername(): String = botProperty.username
 
     override fun getBotToken(): String = botProperty.token
-
 
 }

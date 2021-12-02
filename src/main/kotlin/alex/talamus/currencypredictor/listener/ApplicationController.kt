@@ -30,19 +30,8 @@ class ApplicationController(
         }
     }
 
-    inner class CallbackEventListener {
-        @EventListener
-        fun onApplicationEvent(event: CallbackEvent) {
-            println("CallbackEventListener!!!!!!!!")
-        }
-    }
-
     @Bean
     @Lazy
     fun commandEventListenerBean(): CommandEventListener = CommandEventListener()
-
-    @Bean
-    @Lazy
-    fun callbackEventListenerBean(): CallbackEventListener = CallbackEventListener()
 
 }
